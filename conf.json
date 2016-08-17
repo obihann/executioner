@@ -1,0 +1,11 @@
+{
+  "source": {
+    "include": ["index.js", "src/"],
+    "exclude": ["node_modules"]
+  },
+  "opts": {
+    "recurse": true,
+    "destination": "docs",
+    "verbose": true
+  }
+}
