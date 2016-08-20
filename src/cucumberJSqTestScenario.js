@@ -92,8 +92,10 @@ CucJSQTS.prototype.parseAndConfigure  = function (store) {
     let allFiles, match, matchRegex;
 
     console.log('(Finding a sober executioner)\r\n');
-    Utils.isDefined(this.argv.features, 'feature files are missing.');
-    allFiles = fs.readdirSync(this.argv.features);
+    let path = Utils.isDefined(this.argv.features, 'feature files are missing.', true);
+    path = path === false ? this.config.features : path;
+
+    allFiles = fs.readdirSync(path);
     matchRegex = /^([A-Z]|-|[0-9])+.*.feature/;
     match = file => { return file.match(matchRegex) ? true : false; };
 
@@ -133,9 +135,10 @@ CucJSQTS.prototype.sendHelp  = function () {
 CucJSQTS.prototype.processAndSubmit  = function (store) {
   let cucResults, executionID, executionURL;
 
-  Utils.isDefined(this.argv.results, 'Test results are required.');
+  let path = Utils.isDefined(this.argv.results, 'Test results are required.', true);
+  path = path === false ? this.config.cucumberResults : path;
 
-  fs.readFileAsync(this.argv.results, 'utf8').then(results => {
+  fs.readFileAsync(path, 'utf8').then(results => {
     console.log('(Sharpening the axe)\r\n');
 
     cucResults = results;

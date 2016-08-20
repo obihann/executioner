@@ -41,12 +41,21 @@ class Utils {
 
    /*
     * Check if a value is defined, if not throw a custom error.
+    * @returns {Boolean | Object}
     * @static
     */
-  static isDefined (val, err) {
+  static isDefined (val, err, gentle) {
+    gentle = typeof gentle === 'undefined' ? false : gentle;
+
     if (typeof val === 'undefined') {
-      throw new Error(err);
+      if (gentle === false) {
+        throw new Error(err);
+      } else {
+        return false;
+      }
     }
+
+    return val;
   }
 
    /*
