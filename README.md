@@ -9,8 +9,7 @@ Run your BDD Tests with CucumberJS and track the result in Jira with qTest Scena
 
 ## Usage
 ```base
-$ npm install --save-dev github.com/obihann/executioner.git
-$ ./node_modules/.bin/executioner init
+$ npm install --save-dev git+ssh://git@github.com/obihann/executioner.git
 $ ./node_modules/.bin/executioner full
 ```
 
