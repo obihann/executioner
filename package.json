@@ -1,12 +1,14 @@
 {
-  "name": "cucumberjs-qtest-scenario",
+  "name": "executioner",
   "version": "0.0.1",
   "description": "A qTest Scenario and CucumberJS thingy.",
   "main": "index.js",
+  "repository": "https://github.com/obihann/executioner",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs": "./node_modules/.bin/jsdoc -c jsdoc.conf.json"
   },
+  "bin": "./index.js",
   "author": "",
   "license": "ISC",
   "dependencies": {

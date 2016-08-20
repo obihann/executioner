@@ -1,26 +1,18 @@
 /*
- *#!/usr/bin/env node
- */
-
-/*
- *  Location of .executioner.json
- *  @constant {string}
- */
-// const testrun  = `${__dirname}/.executioner.json`;
-
-/*
- * Node readline module
- * @constant
+ * @const {Object } Node readline module
  */
 const readline = require('readline');
 
 /*
- * Utility functions
- * @constant
+ * @const {Object}  Utility functions
  */
 const Utils = require('./src/utils.js');
 
-function main () {
+/**
+ * Configure all params and save config file.
+ * @returns {undefined}
+ */
+function init () {
   console.log(
     `qTest Scenario  + CucumberJS - Test execution and reporting tool.
 -----------------------------------------------------------------`
@@ -83,7 +75,25 @@ function main () {
       return askQuestion(`Tracker URL (${config.tracker}): `, callback);
     });
   }).then(config => {
-    return Utils.saveJSON(`${__dirname}/executioner.conf`, config);
+    return new Promise(resolve => {
+      let callback = answer => {
+        config.features = answer.length === 0 ? config.features : answer;
+        resolve(config);
+      };
+
+      return askQuestion(`Feature directory (${config.features}): `, callback);
+    });
+  }).then(config => {
+    return new Promise(resolve => {
+      let callback = answer => {
+        config.results = answer.length === 0 ? config.results : answer;
+        resolve(config);
+      };
+
+      return askQuestion(`Cucumber results (${config.cucumberResults}): `, callback);
+    });
+  }).then(config => {
+    return Utils.saveJSON(`${__dirname}/../../executioner.conf`, config);
   }).then(()  => {
     console.log('Done! Results stored in executioner.conf');
   }).catch(err => {
@@ -91,4 +101,4 @@ function main () {
   });
 }
 
-main();
+module.exports = init;
