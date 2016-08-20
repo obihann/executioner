@@ -33,7 +33,7 @@ class Utils {
     * @returns {Promise}
     * @static
     */
-  static loadConfig (path) {
+  static loadJSON (path) {
     return fs.readFileAsync(path, 'utf8').then(data => {
       return Promise.resolve(JSON.parse(data));
     });
@@ -77,7 +77,7 @@ class Utils {
    * @returns {Promise}
    * @static
    */
-  static updateDataFile (file, store) {
+  static saveJSON (file, store) {
     return fs.writeFileAsync(file, JSON.stringify(store, null, 4));
   }
 
@@ -89,11 +89,11 @@ class Utils {
    * @returns {Object}
    * @static
    */
-  static createResult (data, feature, store) {
+  static createResult (data, feature, store, host) {
     data = JSON.parse(data);
 
     let featureResult = new FeatureResult(feature, store.execution);
-    featureResult = this.processCucumber(featureResult, data, store);
+    featureResult = this.processCucumber(featureResult, data, store, host);
 
     return featureResult;
   }
@@ -104,7 +104,7 @@ class Utils {
    * @params {Object} results
    * @params {Object} store
    */
-  static processCucumber (featureResult, results, store) {
+  static processCucumber (featureResult, results, store, host) {
     results.forEach(feature => {
       let dsFeature, log;
 
@@ -117,7 +117,7 @@ class Utils {
           if (element.type === 'scenario') {
 
             log = {
-              'host': process.env.HOSTID,
+              'host': host,
               'execution_method': 'AUTOMATE',
               'start_date': store.execution.start_date.toString(),
               'end_date': store.execution.end_date.toString(),

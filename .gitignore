@@ -72,3 +72,4 @@ testRun.json
 node_modules
 docs
 config.json
+executioner.conf

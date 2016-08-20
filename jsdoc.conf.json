@@ -1,6 +1,6 @@
 {
   "source": {
-    "include": ["index.js", "src/"],
+    "include": ["index.js", "init.js", "src/"],
     "exclude": ["node_modules"]
   },
   "opts": {
