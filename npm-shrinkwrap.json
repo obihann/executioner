@@ -1,5 +1,5 @@
 {
-  "name": "cucumberjs-qtest-scenario",
+  "name": "executioner",
   "version": "0.0.1",
   "dependencies": {
     "ansi-regex": {
@@ -41,6 +41,11 @@
       "version": "1.1.2",
       "from": "bl@>=1.1.2 <1.2.0",
       "resolved": "https://registry.npmjs.org/bl/-/bl-1.1.2.tgz"
+    },
+    "blessed": {
+      "version": "0.1.81",
+      "from": "blessed@latest",
+      "resolved": "https://registry.npmjs.org/blessed/-/blessed-0.1.81.tgz"
     },
     "bluebird": {
       "version": "3.4.1",
