@@ -27,7 +27,7 @@ class ExecutionerJS {
    * @returns {undefined}
    */
   log (data) {
-    this.log(data);
+    console.log(data);
   }
 
   /**
