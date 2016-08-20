@@ -4,170 +4,213 @@ let Utils = require('./utils.js');
 let fs   = require('fs');
 Promise.promisifyAll(fs);
 
-let CucJSQTS = function (argv, config) {
-  this.qts =  new QTS(config.host, config.token);
-  this.argv = argv;
-  this.config = config;
-}
-
-CucJSQTS.prototype.log = function (data) {
-  console.log(data);
-};
-
-CucJSQTS.prototype.getFeature = function (feature) {
-  return this.qts.feature(feature).then(res => {
-    if (typeof this.argv.silent === 'undefined') {
-      this.log(`
-  File Name:  ${res.fileName}
-  ID:         ${res.id}
-  name:       ${res.name}
-  Version ID: ${res.versionId}
-  Scenarios:  ${res.scenarios}
-      `);
-    }
-
-    return Promise.resolve(res);
-  });
-}
-
-CucJSQTS.prototype.createExecution = function () {
-  return this.qts.create().then(Promise.resolve);
-}
-
-CucJSQTS.prototype.updateExecution = function (data) {
-  let id, start;
-
-  if (Object.keys(data).length === 0 && data.constructor === Object) {
-    if (typeof this.argv.execution === 'undefined') {
-      throw new Error('Execution ID is required.');
-    }
-
-    if (typeof this.argv.start === 'undefined') {
-      throw new Error('Start date is required.');
-    }
-
-    data.id = this.argv.execution;
-    data.start = this.argv.start;
+/**
+ * The Bastard Executioner
+ * @class
+ */
+class ExecutionerJS {
+  /**
+   * Setup ExecutionerJS
+   * @param {Object} argv - Object containg all command line arguments.
+   * @param {Object} config - Config object.
+   * @returns {undefined}
+   */
+  constructor (argv, config) {
+    this.qts =  new QTS(config.host, config.token);
+    this.argv = argv;
+    this.config = config;
   }
 
-  id = data.execution_id;
-  start = data.start_date;
-
-  return this.qts.update(id, start).then(Promise.resolve);
-}
-
-CucJSQTS.prototype.submitFeature = function (feature, execution) {
-  return this.qts.submit(feature.cucumber).then(() => {
-    if (typeof this.argv.silent === 'undefined') {
-      this.log(`
-File Name:    ${feature.fileName}
-ID:           ${feature.id}
-name:         ${feature.name}
-Version ID:   ${feature.versionId}
-execution ID: ${execution.execution_id}
-Start Date:   ${execution.start_date}
-End Date:     ${execution.end_date}
-Results:      ${feature.result}
-Scenario Logs:`);
-        feature.cucumber.scenario_logs.forEach(log => {
-          console.log(`  Host:        ${log.host}
-  Method:      ${log.execution_method}
-  Results:     ${log.results}
-  Scenario ID: ${log.scenario_id}
-          `);
-        });
-    }
-  });
-}
-
-CucJSQTS.prototype.parseAndConfigure  = function (store) {
-  console.log(
-    `qTest Scenario  + CucumberJS - Test execution and reporting tool.
------------------------------------------------------------------
-
-(Prepping for execution)`
-  );
-
-  new Promise(resolve => {
-    let allFiles, match, matchRegex;
-
-    console.log('(Finding a sober executioner)\r\n');
-    let path = Utils.isDefined(this.argv.features, 'feature files are missing.', true);
-    path = path === false ? this.config.features : path;
-
-    allFiles = fs.readdirSync(path);
-    matchRegex = /^([A-Z]|-|[0-9])+.*.feature/;
-    match = file => { return file.match(matchRegex) ? true : false; };
-
-    return resolve(allFiles.filter(match));
-  }).then(features => {
-    console.log('(listing the crimes)');
-
-    return Promise.map(features, step => {
-      let feature, matchRegex;
-
-      matchRegex = /^([A-Z]|-|[0-9])*/;
-      feature = step.match(matchRegex)[0];
-
-      return this.getFeature(feature).then(data => {
-        store.features.push(data);
-        Utils.saveJSON(this.config.dataFile, store);
-      });
-    });
-  }).then(() => {
-    return this.createExecution();
-  }).then(data => {
-    console.log('(Waking the priest)\r\n');
-    store.execution = data;
-    Utils.saveJSON(this.config.dataFile, store);
-  });
-}
-
-CucJSQTS.prototype.sendHelp  = function () {
-  fs.readFileAsync(`${__dirname}/../.dashdashhelp`, 'utf8'
-  ).then( data => {
+  /**
+   * A central point to manage all propaganda.
+   * @param {Object|String} data - Content to display via console.
+   * @returns {undefined}
+   */
+  log (data) {
     console.log(data);
-  }).catch(err => {
-    throw new Error('Unable to read help file.', err);
-  });
-}
+  }
 
-CucJSQTS.prototype.processAndSubmit  = function (store) {
-  let cucResults, executionID, executionURL;
-
-  let path = Utils.isDefined(this.argv.results, 'Test results are required.', true);
-  path = path === false ? this.config.cucumberResults : path;
-
-  fs.readFileAsync(path, 'utf8').then(results => {
-    console.log('(Sharpening the axe)\r\n');
-
-    cucResults = results;
-
-    // finish execution
-    return this.updateExecution(store.execution).then(data => {
-      store.execution = data;
-      return Utils.saveJSON(this.config.dataFile, store);
-    });
-  }).then(() => {
-    executionID = store.execution.execution_id;
-    executionURL = this.config.tracker;
-    executionURL = executionURL.replace('$$EXECUTIONID$$', executionID);
-
-    let processFeature = feature => {
-      let featureResult;
-      featureResult = Utils.createResult(cucResults, feature, store, this.config.host);
-      feature.cucumber = featureResult;
-
-      Utils.saveJSON(this.config.dataFile, store);
-      this.submitFeature(feature, store.execution);
-    };
-
-    return Promise.map(store.features, processFeature);
-  }).then(() => {
-    console.log(`Done! See the results at ${executionURL}`);
-  }).catch(err => {
+  /**
+   * A central point for all errors.
+   * @param {Error | String} err - Error object or text.
+   * @returns {undefined}
+   */
+  error (err) {
     throw new Error(err);
-  });
+  }
+
+  /**
+   * Load a feature from qTest Scenario
+   * @param {String} feature - Feature ID
+   * @returns {Object} - Returns a the feature object via a promise.
+   */
+  getFeature (feature) {
+    return this.qts.feature(feature).then(res => {
+      if (typeof this.argv.silent === 'undefined') {
+        this.log(`File Name:  ${res.fileName}`);
+        this.log(`ID:         ${res.id}`);
+        this.log(`name:       ${res.name}`);
+        this.log(`Version ID: ${res.versionId}`);
+        this.log(`Scenarios:  ${res.scenarios}`);
+      }
+
+      return Promise.resolve(res);
+    });
+  }
+
+  /**
+   * Create a new execution in qTest Scenario and store the ID and start date.
+   * @returns {Object} - Returns a the execution object via a promise.
+   */
+  createExecution () {
+    return this.qts.create().then(Promise.resolve);
+  }
+
+  /**
+   * Update the execution with a end date.
+   * @param {Object} data - Execution object.
+   * @returns {Object} - Returns a the feature object via a promise.
+   */
+  updateExecution (data) {
+    let id, start;
+
+    if (Object.keys(data).length === 0 && data.constructor === Object) {
+      if (typeof this.argv.execution === 'undefined') {
+        this.error('Execution ID is required.');
+      }
+
+      if (typeof this.argv.start === 'undefined') {
+        this.error('Start date is required.');
+      }
+
+      data.id = this.argv.execution;
+      data.start = this.argv.start;
+    }
+
+    id = data.execution_id;
+    start = data.start_date;
+
+    return this.qts.update(id, start).then(Promise.resolve);
+  }
+
+  submitFeature (feature, execution) {
+    return this.qts.submit(feature.cucumber).then(() => {
+      if (typeof this.argv.silent === 'undefined') {
+        this.log(`File Name:    ${feature.fileName}`);
+        this.log(`ID:           ${feature.id}`);
+        this.log(`name:         ${feature.name}`);
+        this.log(`Version ID:   ${feature.versionId}`);
+        this.log(`execution ID: ${execution.execution_id}`);
+        this.log(`Start Date:   ${execution.start_date}`);
+        this.log(`End Date:     ${execution.end_date}`);
+        this.log(`Results:      ${feature.result}`);
+        this.log('Scenario Logs:');
+
+        feature.cucumber.scenario_logs.forEach(log => {
+          this.log(`Host:        ${log.host}`);
+          this.log(`Method:      ${log.execution_method}`);
+          this.log(`Results:     ${log.results}`);
+          this.log(`Scenario ID: ${log.scenario_id}`);
+        });
+      }
+    });
+  }
+
+  parseAndConfigure (store) {
+    this.log('qTest Scenario  + CucumberJS - Test execution and reporting tool.');
+    this.log('-----------------------------------------------------------------');
+    this.log('(Prepping for execution)`');
+
+    new Promise(resolve => {
+      let allFiles, match, matchRegex;
+
+      console.log('(Finding a sober executioner)\r\n');
+      let path = Utils.isDefined(this.argv.features, 'feature files are missing.', true);
+      path = path === false ? this.config.features : path;
+
+      allFiles = fs.readdirSync(path);
+      matchRegex = /^([A-Z]|-|[0-9])+.*.feature/;
+      match = file => { return file.match(matchRegex) ? true : false; };
+
+      return resolve(allFiles.filter(match));
+    }).then(features => {
+      console.log('(listing the crimes)');
+
+      return Promise.map(features, step => {
+        let feature, matchRegex;
+
+        matchRegex = /^([A-Z]|-|[0-9])*/;
+        feature = step.match(matchRegex)[0];
+
+        return this.getFeature(feature).then(data => {
+          store.features.push(data);
+          Utils.saveJSON(this.config.dataFile, store);
+        });
+      });
+    }).then(() => {
+      return this.createExecution();
+    }).then(data => {
+      console.log('(Waking the priest)\r\n');
+      store.execution = data;
+      Utils.saveJSON(this.config.dataFile, store);
+    });
+  }
+
+  /**
+   * Displays the help file to the user.
+   * @returns {undefined}
+   */
+  sendHelp () {
+    fs.readFileAsync(`${__dirname}/../.dashdashhelp`, 'utf8'
+    ).then( data => {
+      this.log(data);
+    }).catch(err => {
+      this.error('Unable to read help file.', err);
+    });
+  }
+
+  /**
+   * Process all data and submit features to qTest Scenario.
+   * @param {Object} store - Data object containing all test information.
+   * @returns {undefined}
+   */
+  processAndSubmit (store) {
+    let cucResults, executionID, executionURL;
+
+    let path = Utils.isDefined(this.argv.results, 'Test results are required.', true);
+    path = path === false ? this.config.cucumberResults : path;
+
+    fs.readFileAsync(path, 'utf8').then(results => {
+      console.log('(Sharpening the axe)\r\n');
+
+      cucResults = results;
+
+      // finish execution
+      return this.updateExecution(store.execution).then(data => {
+        store.execution = data;
+        return Utils.saveJSON(this.config.dataFile, store);
+      });
+    }).then(() => {
+      executionID = store.execution.execution_id;
+      executionURL = this.config.tracker;
+      executionURL = executionURL.replace('$$EXECUTIONID$$', executionID);
+
+      let processFeature = feature => {
+        let featureResult;
+        featureResult = Utils.createResult(cucResults, feature, store, this.config.host);
+        feature.cucumber = featureResult;
+
+        Utils.saveJSON(this.config.dataFile, store);
+        this.submitFeature(feature, store.execution);
+      };
+
+      return Promise.map(store.features, processFeature);
+    }).then(() => {
+      console.log(`Done! See the results at ${executionURL}`);
+    }).catch(err => {
+      throw new Error(err);
+    });
+  }
 }
 
-module.exports = CucJSQTS;
+module.exports = ExecutionerJS;
