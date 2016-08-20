@@ -1,0 +1,21 @@
+{
+  "name": "cucumberjs-qtest-scenario",
+  "version": "0.0.1",
+  "description": "A qTest Scenario and CucumberJS thingy.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.4.1",
+    "minimist": "^1.2.0",
+    "request": "^2.74.0",
+    "request-promise": "^4.1.1",
+    "request-promise-native": "^1.0.3"
+  },
+  "devDependencies": {
+    "jsdoc": "^3.4.0"
+  }
+}

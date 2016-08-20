@@ -1,0 +1,18 @@
+Usage: cucumberjs-qtest-scenario <command> <opts>
+Where <command> is one of:
+    feature, create, update, submit
+
+feature <opts>    get a specific feature file
+    --key=FEATURE KEY          jira id of feature i.e. IT-123
+create <opts>     creates a new execution
+update <opts>     updates an execution
+    --execution=EXECUTION ID   execution ID returned on creation of execution
+    --start=START DATE         unix time stamp returned on creation of execution
+submit <opts>     submit feature test logs
+    --execution=EXECUTION ID   execution ID returned on creation of execution
+    --start=START DATE         unix time stamp returned on creation of execution
+    --end=END DATE             unix time stamp returned on update of execution
+    --result=RESULT            result of the feature tests
+    --feature=FEATURE ID       ID of the feature returned with the feature file
+    --veriion=VERSION ID       ID of the version returned with the feature file
+
