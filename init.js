@@ -1,14 +1,4 @@
 /*
- *#!/usr/bin/env node
- */
-
-/*
- *  Location of .executioner.json
- *  @constant {string}
- */
-// const testrun  = `${__dirname}/.executioner.json`;
-
-/*
  * Node readline module
  * @constant
  */
@@ -20,7 +10,7 @@ const readline = require('readline');
  */
 const Utils = require('./src/utils.js');
 
-function main () {
+function init () {
   console.log(
     `qTest Scenario  + CucumberJS - Test execution and reporting tool.
 -----------------------------------------------------------------`
@@ -76,14 +66,32 @@ function main () {
     return new Promise(resolve => {
       let callback = answer => {
         config.tracker = answer.length === 0 ? config.tracker : answer;
-        config.tracker = `${config.tracker}${config.trackExecQuery}`;
+        //config.tracker = `${config.tracker}${config.trackExecQuery}`;
         resolve(config);
       };
 
       return askQuestion(`Tracker URL (${config.tracker}): `, callback);
     });
   }).then(config => {
-    return Utils.saveJSON(`${__dirname}/executioner.conf`, config);
+    return new Promise(resolve => {
+      let callback = answer => {
+        config.features = answer.length === 0 ? config.features : answer;
+        resolve(config);
+      };
+
+      return askQuestion(`Feature directory (${config.features}): `, callback);
+    });
+  }).then(config => {
+    return new Promise(resolve => {
+      let callback = answer => {
+        config.results = answer.length === 0 ? config.results : answer;
+        resolve(config);
+      };
+
+      return askQuestion(`Cucumber results (${config.cucumberResults}): `, callback);
+    });
+  }).then(config => {
+    return Utils.saveJSON(`${__dirname}/../../executioner.conf`, config);
   }).then(()  => {
     console.log('Done! Results stored in executioner.conf');
   }).catch(err => {
@@ -91,4 +99,4 @@ function main () {
   });
 }
 
-main();
+module.exports = init;
