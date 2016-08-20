@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
-// Constants
+/**
+ * @const {String} - Path to testRun.json
+ */
 const TESTRUN = `${__dirname}/testRun.json`;
 
 // Libraries
@@ -15,6 +17,11 @@ let cjsqts;
 let config;
 let screen = new Screen();
 
+/**
+ * Start the executioner and select the correct actions.
+ * @param {Object} store - Data store.
+ * @returns {undefined}
+ */
 function execution (store) {
     switch(process.argv[2]) {
       case 'start':

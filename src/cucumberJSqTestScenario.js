@@ -43,6 +43,7 @@ class ExecutionerJS {
    * A central point for all errors.
    * @param {Error | String} err - Error object or text.
    * @returns {undefined}
+   * @throws Throws execption provided.
    */
   error (err) {
     throw new Error(err);
@@ -234,7 +235,7 @@ class ExecutionerJS {
     }).then(() => {
       this.log(`Done! See the results at ${executionURL}`);
     }).catch(err => {
-      throw new Error(err);
+      this.error(err);
     });
   }
 }

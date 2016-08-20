@@ -1,14 +1,14 @@
-/*
+/**
  *@const {string} PASSED - qTest Scenario API ENUM value for passed tests.
  */
 const PASSED = 'PASSED';
 
-/*
+/**
  * @const {string} FAILED - qTest Scenario API ENUM value for failed tests.
  */
 const FAILED = 'FAILED';
 
-/*
+/**
  * @const {string} UNCOMPLETED - qTest Scenario API ENUM value for
  * incomplete tests.
  */
@@ -22,15 +22,15 @@ Promise.promisifyAll(fs);
 // Modules
 let FeatureResult = require('./featureResult.js');
 
-/*
+/**
  * Utils to assist in working with the SDK.
  * @class
  */
 class Utils {
-   /*
+   /**
     * Load the config file.
-    * @params {string} path path to config file
-    * @returns {Promise}
+    * @param {string} path - Path to config file.
+    * @returns {Object} A parsed JSON object via a promise.
     * @static
     */
   static loadJSON (path) {
@@ -39,9 +39,13 @@ class Utils {
     });
   }
 
-   /*
-    * Check if a value is defined, if not throw a custom error.
-    * @returns {Boolean | Object}
+   /**
+    * Check if a value is defined, if not throw a
+    * custom error if gentle is unset..
+    * @param {Object} val - Value to be tested.
+    * @param {Error|String} err - Error to be thrown.
+    * @param {Boolean} gentle - If true no errors are thrown.
+    * @return {Boolean|Object} If gentle is true returns false or the object.
     * @static
     */
   static isDefined (val, err, gentle) {
@@ -58,10 +62,10 @@ class Utils {
     return val;
   }
 
-   /*
+   /**
     * loadDataFile
-    * @params {string} dataStoreFile - Path to data file.
-    * @returns {Promise}
+    * @param {string} dataStoreFile - Path to data file.
+    * @returns {Object} Returns data store object via a promise.
     * @static
     */
   static loadDataFile (dataStoreFile) {
@@ -79,23 +83,24 @@ class Utils {
     });
   }
 
-  /*
+  /**
    * Update the data file
-   * @params {String} file - Path to the data file.
-   * @params {Object} store - Data store object.
-   * @returns {Promise}
+   * @param {String} file - Path to the data file.
+   * @param {Object} store - Data store object.
+   * @returns {Object} Returns result of save via a promise.
    * @static
    */
   static saveJSON (file, store) {
     return fs.writeFileAsync(file, JSON.stringify(store, null, 4));
   }
 
-  /*
+  /**
    * Create an object containing the results so we can pass to the SDK.
-   * @params {Object} data - Test results.
-   * @params {Object} feature - Feature data loaded from feature files.
-   * @params {Object} store - Datastore.
-   * @returns {Object}
+   * @param {Object} data - Test results.
+   * @param {Object} feature - Feature data loaded from feature files.
+   * @param {Object} store - Datastore.
+   * @param {String} host - Host ID.
+   * @return {Object} Returns result object.
    * @static
    */
   static createResult (data, feature, store, host) {
@@ -107,11 +112,13 @@ class Utils {
     return featureResult;
   }
 
-  /*
+  /**
    * Process results from Cucumber
-   * @params {Object} featureResult
-   * @params {Object} results
-   * @params {Object} store
+   * @param {Object} featureResult - Results of the feature test.
+   * @param {Object} results - Results from cucumber.
+   * @param {Object} store - Data store.
+   * @param {String} host - Host ID.
+   * @returns {Object} Returns parsed cucumber results as a object.
    */
   static processCucumber (featureResult, results, store, host) {
     results.forEach(feature => {
@@ -147,11 +154,11 @@ class Utils {
     return featureResult;
   }
 
-  /*
+  /**
    * Validate alll items within a list and determin
    * if they have passed / failed.
-   * @params {Array} items
-   * @returns {String}
+   * @param {Array} items - Array of items to validate.
+   * @returns {String} Returns PASSED, FAILED, or UMCOMPLETED.
    * @static
    */
   static checkPassed (items) {
@@ -176,20 +183,20 @@ class Utils {
       return result;
   }
 
-  /*
+  /**
    * Take a JSON string and return it as a object within a Promise resolve
-   * @params {String} body
-   * @returns {Promise}
+   * @param {String} body - JSON object.
+   * @returns {Object} - Returns object via a promise.
    * @static
    */
   static promResParse (body) {
     return Promise.resolve(JSON.parse(body));
   }
 
-  /*
+  /**
    * Take an error message and return it in a Promise reject.
-   * @params {Error} e
-   * @returns {Promise}
+   * @param {Error|String} e - Error message to pass in reject.
+   * @returns {Object} Returns a rejected promise containing the error.
    * @static
    */
   static catchMe (e) {

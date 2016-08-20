@@ -1,20 +1,20 @@
-/*
- *@const {string} HOST - URL to qTest Scenario SDK
+/**
+ * @const {string} HOST - URL to qTest Scenario SDK
  */ const HOST = 'https://services.qtestscenario.com/qspec/api';
 
 let rp = require('request-promise');
 let Utils = require('./utils.js');
 
-/*
+/**
  * qTest Scenario SDK.
  * @class
  */
-class QTS {
-  /*
+class QTestSSDK {
+  /**
    * Generate a new SDK.
    * @cconstructor
-   * @params {String} hostId - Unique ID of the host executing the tests.
-   * @params {String} token - API token.
+   * @param {String} hostID - Unique ID of the host executing the tests.
+   * @param {String} token - API token.
  */
   constructor (hostID, token) {
     this.hostID = hostID;
@@ -38,9 +38,9 @@ class QTS {
     return rp(this.options).then(Utils.promResParse).catch(Utils.catchMe);
   }
 
-/*
+/**
  * Create a new execution.
- * @returns {promise}
+ * @returns {Object} Returns object via promise.
  */
   create () {
     this.options.method = 'POST';
@@ -55,10 +55,11 @@ class QTS {
     return rp(this.options).then(Utils.promResParse).catch(Utils.catchMe);
   }
 
-/*
+/**
  * Update the execution object with a end date.
  * @param {Number} id - ID of the execution.
- * @returns {Promise}
+ * @param {Number} start - Timestamp of start date.
+ * @returns {Object} Returns object via promise.
  */
   update (id, start) {
     if (typeof id === 'undefined') {
@@ -81,10 +82,10 @@ class QTS {
     return rp(this.options).then(Utils.promResParse).catch(Utils.catchMe);
   }
 
-  /*
+  /**
    * Submits the results of a feature test.
    * @param {object} data - Object containing CucumberJS test results.
-   * @returns {Promise}
+   * @returns {Object} Returns object via promise.
    */
   submit (data) {
     if (typeof data === 'undefined') {
@@ -100,4 +101,4 @@ class QTS {
   }
 }
 
-module.exports = QTS;
+module.exports = QTestSSDK;
