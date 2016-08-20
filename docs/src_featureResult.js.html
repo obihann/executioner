@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: src/featureResult.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,42 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: src/featureResult.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+* Contains feature and feature execution details.
+* @class
+* @abstract
+*/
+class FeatureResult {
+  /**
+   * Create a new FeatureResult
+   * @constructor
+   * @param {Object} feature - Feature object.
+   * @param {Object} execution - Execution object.
+   */
+  constructor (feature, execution) {
+    this.feature_id = feature.id;
+    this.start_date = execution.start_date;
+    this.end_date = execution.end_date;
+    this.execution_id = execution.execution_id;
+    this.versionId = feature.versionId;
+    this.scenario_logs = [];
+    this.results = {};
+  }
+}
 
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+module.exports = FeatureResult;
+</code></pre>
+        </article>
+    </section>
 
 
 

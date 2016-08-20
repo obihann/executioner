@@ -64,8 +64,4 @@ jspm_packages
 # Project stuff
 .env
 testRun.json
-
-# JSDoc
-testRun.json
-config.json
 executioner.conf
