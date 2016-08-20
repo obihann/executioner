@@ -1,15 +1,17 @@
 /*
- * Node readline module
- * @constant
+ * @const {Object } Node readline module
  */
 const readline = require('readline');
 
 /*
- * Utility functions
- * @constant
+ * @const {Object}  Utility functions
  */
 const Utils = require('./src/utils.js');
 
+/**
+ * Configure all params and save config file.
+ * @returns {undefined}
+ */
 function init () {
   console.log(
     `qTest Scenario  + CucumberJS - Test execution and reporting tool.
@@ -66,7 +68,7 @@ function init () {
     return new Promise(resolve => {
       let callback = answer => {
         config.tracker = answer.length === 0 ? config.tracker : answer;
-        //config.tracker = `${config.tracker}${config.trackExecQuery}`;
+        config.tracker = `${config.tracker}${config.trackExecQuery}`;
         resolve(config);
       };
 
