@@ -5,7 +5,7 @@ let fs   = require('fs');
 Promise.promisifyAll(fs);
 
 let CucJSQTS = function (argv, config) {
-  this.qts =  new QTS(process.env.HOSTID, process.env.QTSTOKEN);
+  this.qts =  new QTS(config.host, config.token);
   this.argv = argv;
   this.config = config;
 }
@@ -92,8 +92,10 @@ CucJSQTS.prototype.parseAndConfigure  = function (store) {
     let allFiles, match, matchRegex;
 
     console.log('(Finding a sober executioner)\r\n');
-    Utils.isDefined(this.argv.features, 'feature files are missing.');
-    allFiles = fs.readdirSync(this.argv.features);
+    let path = Utils.isDefined(this.argv.features, 'feature files are missing.', true);
+    path = path === false ? this.config.features : path;
+
+    allFiles = fs.readdirSync(path);
     matchRegex = /^([A-Z]|-|[0-9])+.*.feature/;
     match = file => { return file.match(matchRegex) ? true : false; };
 
@@ -109,7 +111,7 @@ CucJSQTS.prototype.parseAndConfigure  = function (store) {
 
       return this.getFeature(feature).then(data => {
         store.features.push(data);
-        Utils.updateDataFile(this.config.dataFile, store);
+        Utils.saveJSON(this.config.dataFile, store);
       });
     });
   }).then(() => {
@@ -117,12 +119,12 @@ CucJSQTS.prototype.parseAndConfigure  = function (store) {
   }).then(data => {
     console.log('(Waking the priest)\r\n');
     store.execution = data;
-    Utils.updateDataFile(this.config.dataFile, store);
+    Utils.saveJSON(this.config.dataFile, store);
   });
 }
 
 CucJSQTS.prototype.sendHelp  = function () {
-  fs.readFileAsync(`${__dirname}/.dashdashhelp`, 'utf8'
+  fs.readFileAsync(`${__dirname}/../.dashdashhelp`, 'utf8'
   ).then( data => {
     console.log(data);
   }).catch(err => {
@@ -133,9 +135,10 @@ CucJSQTS.prototype.sendHelp  = function () {
 CucJSQTS.prototype.processAndSubmit  = function (store) {
   let cucResults, executionID, executionURL;
 
-  Utils.isDefined(this.argv.results, 'Test results are required.');
+  let path = Utils.isDefined(this.argv.results, 'Test results are required.', true);
+  path = path === false ? this.config.cucumberResults : path;
 
-  fs.readFileAsync(this.argv.results, 'utf8').then(results => {
+  fs.readFileAsync(path, 'utf8').then(results => {
     console.log('(Sharpening the axe)\r\n');
 
     cucResults = results;
@@ -143,19 +146,19 @@ CucJSQTS.prototype.processAndSubmit  = function (store) {
     // finish execution
     return this.updateExecution(store.execution).then(data => {
       store.execution = data;
-      return Utils.updateDataFile(this.config.dataFile, store);
+      return Utils.saveJSON(this.config.dataFile, store);
     });
   }).then(() => {
     executionID = store.execution.execution_id;
-    executionURL = this.config.executionURL;
+    executionURL = this.config.tracker;
     executionURL = executionURL.replace('$$EXECUTIONID$$', executionID);
 
     let processFeature = feature => {
       let featureResult;
-      featureResult = Utils.createResult(cucResults, feature, store);
+      featureResult = Utils.createResult(cucResults, feature, store, this.config.host);
       feature.cucumber = featureResult;
 
-      Utils.updateDataFile(this.config.dataFile, store);
+      Utils.saveJSON(this.config.dataFile, store);
       this.submitFeature(feature, store.execution);
     };
 

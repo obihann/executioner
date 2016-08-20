@@ -7,24 +7,13 @@ const TESTRUN = `${__dirname}/testRun.json`;
 let argv = require('minimist')(process.argv.slice(2));
 
 // Modules
+let init = require('./init.js');
 let CucumberJSqTestScenario = require('./src/cucumberJSqTestScenario.js');
 let Utils = require('./src/utils.js');
 let cjsqts;
 let config;
 
-// Load config.json
-Utils.loadConfig(`${__dirname}/config.json`).then(data => {
-  config = data;
-  config.dataFile = TESTRUN;
-  cjsqts = new CucumberJSqTestScenario(argv, config);
-
-  // Check for token and host
-  Utils.isDefined(process.env.QTSTOKEN, 'qTest Scenario token is unset.');
-  Utils.isDefined(process.env.HOSTID,'Host ID is unset.' );
-
-  return Utils.loadDataFile(config.dataFile);
-}).then(
-  store => {
+function execution (store) {
     switch(process.argv[2]) {
       case 'start':
         cjsqts.parseAndConfigure(store);
@@ -32,11 +21,29 @@ Utils.loadConfig(`${__dirname}/config.json`).then(data => {
       case 'finish':
         cjsqts.processAndSubmit(store);
         break;
+      case 'init':
+        init();
+        break;
       default:
         cjsqts.sendHelp();
         break;
     }
-  }
-).catch(err => {
-  throw new Error(err);
+}
+
+let path = `${__dirname}/../../executioner.conf`;
+path = typeof argv.config === 'undefined' ? path : argv.config;
+
+// Load config.json
+Utils.loadJSON(path).then(data => {
+  config = data;
+  config.dataFile = TESTRUN;
+  cjsqts = new CucumberJSqTestScenario(argv, config);
+
+  // Check for token and host
+  Utils.isDefined(config.tracker, 'qTest Scenario token is unset.');
+  Utils.isDefined(config.host,'Host ID is unset.' );
+
+  return Utils.loadDataFile(config.dataFile);
+}).then(execution).catch(() => {
+  init();
 });

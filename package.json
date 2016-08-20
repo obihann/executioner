@@ -1,16 +1,20 @@
 {
-  "name": "cucumberjs-qtest-scenario",
+  "name": "executioner",
   "version": "0.0.1",
   "description": "A qTest Scenario and CucumberJS thingy.",
   "main": "index.js",
+  "repository": "https://github.com/obihann/executioner",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "./node_modules/.bin/jsdoc -c jsdoc.conf.json"
   },
+  "bin": "./index.js",
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.4.1",
     "minimist": "^1.2.0",
+    "readline-promise": "0.0.1",
     "request": "^2.74.0",
     "request-promise": "^4.1.1",
     "request-promise-native": "^1.0.3"
