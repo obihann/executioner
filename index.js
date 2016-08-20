@@ -13,14 +13,14 @@ let cjsqts;
 let config;
 
 // Load config.json
-Utils.loadConfig(`${__dirname}/config.json`).then(data => {
+Utils.loadJSON(`${__dirname}/executioner.conf`).then(data => {
   config = data;
   config.dataFile = TESTRUN;
   cjsqts = new CucumberJSqTestScenario(argv, config);
 
   // Check for token and host
-  Utils.isDefined(process.env.QTSTOKEN, 'qTest Scenario token is unset.');
-  Utils.isDefined(process.env.HOSTID,'Host ID is unset.' );
+  Utils.isDefined(config.tracker, 'qTest Scenario token is unset.');
+  Utils.isDefined(config.host,'Host ID is unset.' );
 
   return Utils.loadDataFile(config.dataFile);
 }).then(
