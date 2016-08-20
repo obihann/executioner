@@ -7,7 +7,14 @@ Run your BDD Tests with CucumberJS and track the result in Jira with qTest Scena
 
 ![](https://github.com/obihann/executioner/raw/master/screenshot.png)
 
-##License
+## Usage
+```base
+$ npm install --save-dev github.com/obihann/executioner.git
+$ ./node_modules/.bin/executioner init
+$ ./node_modules/.bin/executioner full
+```
+
+## License
 This tool is protected by the [GNU General Public License v3](http://www.gnu.org/licenses/gpl-3.0.html).
 
 Copyright [Jeffrey Hann](http://jeffreyhann.ca/), [REDspace Canada](https://redspace.com/) 2016
