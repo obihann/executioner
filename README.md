@@ -1,4 +1,5 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/57b842461dcdc90045187acf/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57b842461dcdc90045187acf)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f91db2fb419e40f78cf4e02b9a08081c)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=obihann/executioner&amp;utm_campaign=Badge_Grade)
 [![node](https://img.shields.io/badge/node-6.2.x-yellow.svg?style=flat-square)](https://nodejs.org/)
 [![license](https://img.shields.io/badge/license-GNU%20Public%20License%20v3.0-blue.svg?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0.html)
 
