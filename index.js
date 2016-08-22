@@ -8,7 +8,7 @@ let Promise = require("bluebird");
 Promise.promisifyAll(fs);
 
 // Modules
-let init = require('./init.js');
+let init = require('./src/init.js');
 let CucumberJSqTestScenario = require('./src/cucumberJSqTestScenario.js');
 let Utils = require('./src/utils.js');
 let cjsqts;
