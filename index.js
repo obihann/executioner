@@ -31,12 +31,19 @@ switch(process.argv[2]) {
     if (typeof argv.help !== 'undefined') {
       Utils.sendHelp();
     } else {
-      let screen = new Screen();
+      let gui, screen;
+
+      gui = typeof argv.stdout !== 'undefined' ? false : true;
+
+      if (gui === true) {
+        screen = new Screen();
+      }
+
       // Load config.json
       Utils.loadJSON(path).then(data => {
         config = data;
         config.dataFile = dataFile;
-        cjsqts = new CucumberJSqTestScenario(argv, config, screen);
+        cjsqts = new CucumberJSqTestScenario(argv, config, screen, gui);
 
         // Check for token and host
         Utils.isDefined(config.tracker, 'qTest Scenario token is unset.');
