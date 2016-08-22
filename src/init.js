@@ -6,7 +6,7 @@ const readline = require('readline');
 /*
  * @const {Object}  Utility functions
  */
-const Utils = require('./src/utils.js');
+const Utils = require('./utils.js');
 
 /**
  * Configure all params and save config file.
@@ -33,7 +33,7 @@ function init () {
     });
   };
 
-  Utils.loadJSON(`${__dirname}/executioner.example.conf`).then(config => {
+  Utils.loadJSON(`${__dirname}/../executioner.example.conf`).then(config => {
     return new Promise(resolve => {
       let callback = answer => {
         config.api = answer.length === 0 ? config.host : answer;
