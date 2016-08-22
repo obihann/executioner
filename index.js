@@ -1,13 +1,11 @@
 #!/usr/bin/env node
 
-/**
- * @const {String} - Path to testRun.json
- */
-const TESTRUN = `${__dirname}/testRun.json`;
-
 // Libraries
 let argv = require('minimist')(process.argv.slice(2));
 let Screen  = require('./src/screen.js');
+let fs = require('fs');
+let Promise = require("bluebird");
+Promise.promisifyAll(fs);
 
 // Modules
 let init = require('./init.js');
@@ -44,17 +42,23 @@ function execution (store) {
 }
 
 let path = `${__dirname}/../../executioner.conf`;
+let dataFile  = `${__dirname}/../../executioner.results.json`;
+
 path = typeof argv.config === 'undefined' ? path : argv.config;
+dataFile = typeof argv.log === 'undefined' ? dataFile : argv.log;
+
+// Delete executioner.results.json
+fs.unlinkAsync(dataFile).catch(() => {
+});
 
 if (process.argv[2] === 'init') {
   init();
 } else {
   let screen = new Screen();
-
   // Load config.json
   Utils.loadJSON(path).then(data => {
     config = data;
-    config.dataFile = TESTRUN;
+    config.dataFile = dataFile;
     cjsqts = new CucumberJSqTestScenario(argv, config, screen);
 
     // Check for token and host
@@ -62,9 +66,8 @@ if (process.argv[2] === 'init') {
     Utils.isDefined(config.host,'Host ID is unset.' );
 
     return Utils.loadDataFile(config.dataFile);
-  }).then(execution).catch(
-    e => {
-      screen.screen.destroy();
-      throw new Error(e);
-    });
+  }).then(execution).catch(e => {
+    screen.screen.destroy();
+    throw new Error(e);
+  });
 }
