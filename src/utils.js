@@ -34,6 +34,7 @@ class Utils {
     * @static
     */
   static loadJSON (path) {
+    console.log(path);
     return fs.readFileAsync(path, 'utf8').then(data => {
       return Promise.resolve(JSON.parse(data));
     });
@@ -201,6 +202,20 @@ class Utils {
    */
   static catchMe (e) {
     return Promise.reject(e);
+  }
+
+  /**
+   * Displays the help file to the user.
+   * @returns {undefined}
+   * @static
+   */
+  static sendHelp () {
+    fs.readFileAsync(`${__dirname}/../.dashdashhelp`, 'utf8'
+    ).then( data => {
+      console.log(data);
+    }).catch(err => {
+      console.error('Unable to read help file.', err);
+    });
   }
 }
 
