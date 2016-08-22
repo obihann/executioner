@@ -182,19 +182,6 @@ class ExecutionerJS {
   }
 
   /**
-   * Displays the help file to the user.
-   * @returns {undefined}
-   */
-  sendHelp () {
-    fs.readFileAsync(`${__dirname}/../.dashdashhelp`, 'utf8'
-    ).then( data => {
-      this.log(data);
-    }).catch(err => {
-      this.error('Unable to read help file.', err);
-    });
-  }
-
-  /**
    * Process all data and submit features to qTest Scenario.
    * @param {Object} store - Data object containing all test information.
    * @returns {undefined}
