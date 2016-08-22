@@ -12,25 +12,22 @@ Run your BDD Tests with CucumberJS and track the result in Jira with qTest Scena
 The latest release is [v1.0.0](https://github.com/obihann/executioner/archive/v1.0.0.tar.gz) (SHA1: a176fd0423bf707763e07c9fd5ca328013390ab5)
 
 ## Installation
-```base
-$ npm install --save-dev git+ssh://git@github.com/obihann/executioner.git
-```
+```npm install --save-dev git+ssh://git@github.com/obihann/executioner.git```
 
 ## Usage
-
-First run the init script to setup your token, the path to your feature files, and path to your vagrant JSON results.
-```base
-$ ./node_modules/.bin/executioner init
-```
-
-Default usage:
 ```bash
-$ ./node_modules/.bin/executioner full
-```
+Usage: cucumberjs-qtest-scenario <command> <opts>
+Where <command> is one of:
+   init, test
 
-Specify the path to your config file:
-```bash
-$ ./node_modules/.bin/executioner full --config ./executioner.conf
+Commands:
+  init <options>   Generate executioner.conf
+  test <options>   Run tests and upload results.
+
+Options:
+  --config <value> Path to executioner.conf
+  --log    <value> Path to executioner.results.json
+  --help           Display help
 ```
 
 ## License
