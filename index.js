@@ -3,6 +3,7 @@
 // Libraries
 let argv = require('minimist')(process.argv.slice(2));
 let Screen  = require('./src/screen.js');
+let child_process = require('child_process');
 let fs = require('fs');
 let Promise = require("bluebird");
 Promise.promisifyAll(fs);
@@ -11,13 +12,16 @@ Promise.promisifyAll(fs);
 let init = require('./src/init.js');
 let CucumberJSqTestScenario = require('./src/cucumberJSqTestScenario.js');
 let Utils = require('./src/utils.js');
-let cjsqts;
-let config;
-let path = `${__dirname}/../../executioner.conf`;
-let dataFile  = `${__dirname}/../../executioner.results.json`;
 
+// Variables
+let cjsqts, config, dataFile, exec, path, protractorCMD;
+
+path = `${__dirname}/../../executioner.conf`;
+dataFile  = `${__dirname}/../../executioner.results.json`;
 path = typeof argv.config === 'undefined' ? path : argv.config;
 dataFile = typeof argv.log === 'undefined' ? dataFile : argv.log;
+exec = child_process.exec;
+protractorCMD = `${__dirname}/node_modules/.bin/protractor ${__dirname}/../../protractor.config.js`;
 
 // Delete executioner.results.json
 fs.unlinkAsync(dataFile).catch(() => {
@@ -53,9 +57,31 @@ switch(process.argv[2]) {
       }).then(store => {
         return cjsqts.parseAndConfigure(store);
       }).then(store => {
+        console.log(123);
+
+        return new Promise((resolve, reject) => {
+          return exec(protractorCMD, (err, stdout) => {
+            if (err) reject(err);
+
+            if (gui) {
+              this.screen.log.log(stdout);
+            } else {
+              console.log(stdout);
+            }
+
+            resolve(store);
+
+          });
+        });
+
+      }).then(store => {
+        console.log(456);
         return cjsqts.processAndSubmit(store);
       }).catch(e => {
-        screen.screen.destroy();
+        if (typeof screen !== 'undefined') {
+          screen.screen.destroy();
+        }
+
         throw new Error(e);
       });
     }
