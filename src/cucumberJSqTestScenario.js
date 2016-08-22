@@ -15,11 +15,12 @@ class ExecutionerJS {
    * @param {Object} config - Config object.
    * @returns {undefined}
    */
-  constructor (argv, config, screen) {
+  constructor (argv, config, screen, gui) {
     this.qts =  new QTS(config.host, config.token);
     this.argv = argv;
     this.config = config;
     this.screen = screen;
+    this.gui = gui;
   }
 
   /**
@@ -28,15 +29,27 @@ class ExecutionerJS {
    * @returns {undefined}
    */
   log (data) {
-    this.screen.log.log(data);
+    if (this.gui === true) {
+      this.screen.log.log(data);
+    } else {
+      console.log(data);
+    }
   }
 
   logFeature (data) {
-    this.screen.featureLog.log(data);
+    if (this.gui === true) {
+      this.screen.featureLog.log(data);
+    } else {
+      console.log(data);
+    }
   }
 
   logResult (data) {
-    this.screen.resultLog.log(data);
+    if (this.gui === true) {
+      this.screen.resultLog.log(data);
+    } else {
+      console.log(data);
+    }
   }
 
   /**
@@ -140,7 +153,7 @@ class ExecutionerJS {
    * @returns {undefined}
    */
   parseAndConfigure (store) {
-    this.screen.showLog();
+    if (this.gui === true) this.screen.showLog();
 
     this.log('(Prepping for execution)');
 
@@ -157,7 +170,7 @@ class ExecutionerJS {
 
       return resolve(allFiles.filter(match));
     }).then(features => {
-      this.screen.showFeatures();
+      if (this.gui === true) this.screen.showFeatures();
       this.log('(listing the crimes)');
 
       return Promise.map(features, step => {
@@ -189,7 +202,7 @@ class ExecutionerJS {
   processAndSubmit (store) {
     let cucResults, executionID, executionURL;
 
-    this.screen.showResults();
+    if (this.gui === true) this.screen.showResults();
 
     let path = Utils.isDefined(this.argv.results, 'Test results are required.', true);
     path = path === false ? this.config.cucumberResults : path;
