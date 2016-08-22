@@ -6,6 +6,8 @@
 # ExecutionerJS
 Run your BDD Tests with CucumberJS and track the result in Jira with qTest Scenario
 
+![](https://github.com/obihann/executioner/raw/master/screenshot.png)
+
 ## Download
 The latest release is [v1.0.0](https://github.com/obihann/executioner/archive/v1.0.0.tar.gz) (SHA1: a176fd0423bf707763e07c9fd5ca328013390ab5)
 
