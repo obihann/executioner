@@ -27,6 +27,7 @@ Commands:
 Options:
   --config <value> Path to executioner.conf
   --log    <value> Path to executioner.results.json
+  --stdout         Use standard output instead of the UI
   --help           Display help
 ```
 
