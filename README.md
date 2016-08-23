@@ -9,7 +9,7 @@ Run your BDD Tests with CucumberJS and track the result in Jira with qTest Scena
 ![](https://github.com/obihann/executioner/raw/master/screenshot.png)
 
 ## Download
-The latest release is [v1.1.0](https://github.com/obihann/executioner/archive/v1.1.0.tar.gz) (SHA1: 978ecf655e5ef39f6044486028e7624dd2409ca3)
+The latest release is [v1.2.0](https://github.com/obihann/executioner/archive/v1.2.0.tar.gz) (SHA1: 434034e501eb12e1b6a19afa3139e0822311e6ea)
 
 ## Installation
 ```npm install --save-dev git+ssh://git@github.com/obihann/executioner.git```
