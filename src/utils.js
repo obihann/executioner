@@ -129,7 +129,7 @@ class Utils {
         return feat.name === feature.name;
       });
 
-      if (dsFeature.name === feature.name) {
+      if (typeof dsFeature !== 'undefined' && dsFeature.name === feature.name) {
         feature.elements.forEach(element => {
           if (element.type === 'scenario') {
 
