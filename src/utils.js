@@ -108,7 +108,7 @@ class Utils {
     data = JSON.parse(data);
 
     let featureResult = new FeatureResult(feature, store.execution);
-    featureResult = this.processCucumber(featureResult, data, store, host);
+    featureResult = this.processCucumber(feature, featureResult, data, store, host);
 
     return featureResult;
   }
@@ -121,34 +121,36 @@ class Utils {
    * @param {String} host - Host ID.
    * @returns {Object} Returns parsed cucumber results as a object.
    */
-  static processCucumber (featureResult, results, store, host) {
+  static processCucumber (origFeature, featureResult, results, store, host) {
     results.forEach(feature => {
       let dsFeature, log;
 
-      dsFeature = store.features.find(feat => {
-        return feat.name === feature.name;
-      });
-
-      if (typeof dsFeature !== 'undefined' && dsFeature.name === feature.name) {
-        feature.elements.forEach(element => {
-          if (element.type === 'scenario') {
-
-            log = {
-              'host': host,
-              'execution_method': 'AUTOMATE',
-              'start_date': store.execution.start_date.toString(),
-              'end_date': store.execution.end_date.toString(),
-              'scenario_id': dsFeature.scenarios[element.name],
-              'execution_log': null
-            }
-
-            log.result = this.checkPassed(element.steps);
-
-            if (typeof log.scenario_id !== 'undefined') {
-              featureResult.scenario_logs.push(log);
-            }
-          }
+      if (feature.name === origFeature.name) {
+        dsFeature = store.features.find(feat => {
+          return feat.name === feature.name;
         });
+
+        if (typeof dsFeature !== 'undefined' && dsFeature.name === feature.name) {
+          feature.elements.forEach(element => {
+            if (element.type === 'scenario') {
+              console.log(origFeature);
+              log = {
+                'host': host,
+                'execution_method': 'AUTOMATE',
+                'start_date': store.execution.start_date.toString(),
+                'end_date': store.execution.end_date.toString(),
+                'scenario_id': dsFeature.scenarios[element.name],
+                'execution_log': null
+              }
+
+              log.result = this.checkPassed(element.steps);
+
+              if (typeof log.scenario_id !== 'undefined') {
+                featureResult.scenario_logs.push(log);
+              }
+            }
+          });
+        }
       }
     });
 

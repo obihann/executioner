@@ -13,6 +13,8 @@ class ExecutionerJS {
    * Setup ExecutionerJS
    * @param {Object} argv - Object containg all command line arguments.
    * @param {Object} config - Config object.
+   * @param {Object} screen - screen object
+   * @param {Boolean} gui - flag if we display the gui or use stdout
    * @returns {undefined}
    */
   constructor (argv, config, screen, gui) {
