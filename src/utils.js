@@ -34,7 +34,6 @@ class Utils {
     * @static
     */
   static loadJSON (path) {
-    console.log(path);
     return fs.readFileAsync(path, 'utf8').then(data => {
       return Promise.resolve(JSON.parse(data));
     });
@@ -125,32 +124,35 @@ class Utils {
     results.forEach(feature => {
       let dsFeature, log;
 
-      if (feature.name === origFeature.name) {
-        dsFeature = store.features.find(feat => {
-          return feat.name === feature.name;
-        });
-
-        if (typeof dsFeature !== 'undefined' && dsFeature.name === feature.name) {
-          feature.elements.forEach(element => {
-            if (element.type === 'scenario') {
-              console.log(origFeature);
-              log = {
-                'host': host,
-                'execution_method': 'AUTOMATE',
-                'start_date': store.execution.start_date.toString(),
-                'end_date': store.execution.end_date.toString(),
-                'scenario_id': dsFeature.scenarios[element.name],
-                'execution_log': null
-              }
-
-              log.result = this.checkPassed(element.steps);
-
-              if (typeof log.scenario_id !== 'undefined') {
-                featureResult.scenario_logs.push(log);
-              }
-            }
+      try {
+        if (feature.name === origFeature.name) {
+          dsFeature = store.features.find(feat => {
+            return feat.name === feature.name;
           });
+
+          if (typeof dsFeature !== 'undefined' && dsFeature.name === feature.name) {
+            feature.elements.forEach(element => {
+              if (element.type === 'scenario') {
+                log = {
+                  'host': host,
+                  'execution_method': 'AUTOMATE',
+                  'start_date': store.execution.start_date.toString(),
+                  'end_date': store.execution.end_date.toString(),
+                  'scenario_id': dsFeature.scenarios[element.name],
+                  'execution_log': null
+                }
+
+                log.result = this.checkPassed(element.steps);
+
+                if (typeof log.scenario_id !== 'undefined') {
+                  featureResult.scenario_logs.push(log);
+                }
+              }
+            });
+          }
         }
+      } catch (e) {
+        console.warn('Unable to parse feature ID:', origFeature.id);
       }
     });
 
