@@ -42,7 +42,7 @@ class QTestSSDK {
  * Create a new execution.
  * @returns {Object} Returns object via promise.
  */
-  create () {
+  create (dryrun=false) {
     this.options.method = 'POST';
     this.options.uri = `${HOST}/execution`;
     this.options.body = JSON.stringify({

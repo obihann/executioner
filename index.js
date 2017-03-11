@@ -31,9 +31,10 @@ switch(process.argv[2]) {
     if (typeof argv.help !== 'undefined') {
       Utils.sendHelp();
     } else {
-      let gui, screen;
+      let gui, screen, dryrun;
 
       gui = typeof argv.stdout !== 'undefined' ? false : true;
+      dryrun = typeof argv.dryrun !== 'undefined' ? false : true;
 
       if (gui === true) {
         screen = new Screen();
@@ -53,7 +54,7 @@ switch(process.argv[2]) {
       }).then(store => {
         return cjsqts.parseAndConfigure(store);
       }).then(store => {
-        return cjsqts.processAndSubmit(store);
+        return cjsqts.processAndSubmit(store, dryrun);
       }).catch(e => {
         screen.screen.destroy();
         throw new Error(e);

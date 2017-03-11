@@ -201,7 +201,7 @@ class ExecutionerJS {
    * @param {Object} store - Data object containing all test information.
    * @returns {undefined}
    */
-  processAndSubmit (store) {
+  processAndSubmit (store, dryrun=false) {
     let cucResults, executionID, executionURL;
 
     if (this.gui === true) this.screen.showResults();
@@ -230,7 +230,11 @@ class ExecutionerJS {
         feature.cucumber = featureResult;
 
         Utils.saveJSON(this.config.dataFile, store);
-        return this.submitFeature(feature, store.execution);
+        if (dryrun === true) {
+          return this.submitFeature(feature, store.execution);
+        } else {
+          new Promise.resolve();
+        }
       };
 
       return Promise.map(store.features, processFeature);
