@@ -1,9 +1,12 @@
 {
   "name": "executioner",
-  "version": "0.0.1",
+  "version": "1.0.4",
   "description": "A qTest Scenario and CucumberJS thingy.",
   "main": "index.js",
   "repository": "https://github.com/obihann/executioner",
+  "publishConfig" : {
+    "registry" : "https://nexus.redspacedev.com/repository/redspace-nexus-r3-npm/"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs": "./node_modules/.bin/jsdoc -c jsdoc.conf.json"
